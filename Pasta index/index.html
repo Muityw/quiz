@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Questionário de Desenvolvimento Web</title>
+    <link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Questionário de Desenvolvimento Web</h1>
+            <p><strong>Tentativas restantes:</strong> <span id="remaining-attempts">3</span></p>
+            <p><strong>Maior pontuação:</strong> <span id="highest-score">0</span></p>
+        </header>
+
+        <div class="question-nav"></div>
+        
+        <main>
+            <form id="quiz-form"></form>
+        </main>
+
+        <div class="navigation-buttons">
+            <button type="button" onclick="previousQuestion()">← Anterior</button>
+            <button type="button" onclick="nextQuestion()">Próxima →</button>
+        </div>
+
+        <button id="submit-button" type="button" onclick="submitQuiz()">Enviar</button>
+        <div id="feedback"></div>
+    </div>
+
+    <script src="App.js"></script>
+</body>
+</html>
