@@ -15,27 +15,43 @@ function App() {
     const loadQuestions = async () => {
       try {
         const response = await fetch("/questions.xml");
+  
+        if (!response.ok) {
+          throw new Error("Falha ao carregar o XML.");
+        }
+  
         const data = await response.text();
         const parser = new DOMParser();
         const xmlDoc = parser.parseFromString(data, "application/xml");
-
-        // Verifica se o XML foi carregado corretamente
+  
+        // Verificar se o XML contém perguntas
         const questionNodes = xmlDoc.getElementsByTagName("question");
+  
         if (questionNodes.length === 0) {
           throw new Error("Nenhuma pergunta encontrada no XML.");
         }
-
-        const parsedQuestions = Array.from(questionNodes).map((question) => ({
-          id: question.getAttribute("id"),
-          text: question.getElementsByTagName("text")[0].textContent,
-          answers: Array.from(question.getElementsByTagName("answer")).map((answer) => ({
+  
+        // Log para depuração: verifique se as perguntas estão sendo lidas corretamente
+        console.log("Perguntas carregadas:", questionNodes);
+  
+        const parsedQuestions = Array.from(questionNodes).map((question) => {
+          const questionText = question.getElementsByTagName("text")[0]?.textContent.trim() || "";
+          console.log("Texto da pergunta:", questionText); // Log para verificar o texto da pergunta
+  
+          const answers = Array.from(question.getElementsByTagName("answer")).map((answer) => ({
             value: answer.getAttribute("value"),
-            text: answer.textContent,
-          })),
-        }));
-
+            text: answer.textContent.trim(),
+          }));
+          return {
+            id: question.getAttribute("id"),
+            text: questionText,
+            answers,
+          };
+        });
+  
         setQuestions(parsedQuestions);
-
+        setLoading(false); // Define que o carregamento foi concluído
+  
         // Inicializa as respostas do usuário
         setUserAnswers(
           parsedQuestions.reduce((acc, question) => {
@@ -43,16 +59,15 @@ function App() {
             return acc;
           }, {})
         );
-
-        setLoading(false); // Define que o carregamento foi concluído
       } catch (error) {
         console.error("Erro ao carregar o XML:", error);
         setLoading(false); // Finaliza o carregamento mesmo se houver erro
       }
     };
-
+  
     loadQuestions();
-  }, []); // A dependência vazia garante que isso ocorra apenas uma vez ao carregar o componente
+  }, []);
+  
 
   // Manipula a resposta do usuário
   const handleAnswer = (questionId, value) => {
@@ -138,7 +153,7 @@ function App() {
           <div className="question">
             <p>
               {currentQuestionIndex + 1}.{" "}
-              {questions[currentQuestionIndex].text}
+              {questions[currentQuestionIndex].text} {/* Exibe o texto da pergunta */}
             </p>
             {questions[currentQuestionIndex].answers.map((answer, index) => (
               <label key={index}>
@@ -153,7 +168,7 @@ function App() {
                     userAnswers[questions[currentQuestionIndex].id] === answer.value
                   }
                 />
-                {answer.text}
+                {answer.text} {/* Exibe as respostas */}
               </label>
             ))}
           </div>
