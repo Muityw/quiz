@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./estilo.css";
+import "./styles/estilo.css";
 
 function App() {
   const [questions, setQuestions] = useState([]);
@@ -7,33 +7,59 @@ function App() {
   const [userAnswers, setUserAnswers] = useState({});
   const [attemptsLeft, setAttemptsLeft] = useState(3);
   const [highestScore, setHighestScore] = useState(0);
+  const [quizFinished, setQuizFinished] = useState(false); // Estado para controle do fim do quiz
+  const [loading, setLoading] = useState(true); // Estado para controle de carregamento
 
+  // Carrega as perguntas do XML
   useEffect(() => {
-    fetch("questions.xml")
-      .then((response) => response.text())
-      .then((data) => {
+    const loadQuestions = async () => {
+      try {
+        const response = await fetch("/questions.xml");
+        const data = await response.text();
         const parser = new DOMParser();
         const xmlDoc = parser.parseFromString(data, "application/xml");
+
+        // Verifica se o XML foi carregado corretamente
         const questionNodes = xmlDoc.getElementsByTagName("question");
+        if (questionNodes.length === 0) {
+          throw new Error("Nenhuma pergunta encontrada no XML.");
+        }
+
         const parsedQuestions = Array.from(questionNodes).map((question) => ({
           id: question.getAttribute("id"),
           text: question.getElementsByTagName("text")[0].textContent,
-          answers: Array.from(question.getElementsByTagName("answer")).map(
-            (answer) => ({
-              value: answer.getAttribute("value"),
-              text: answer.textContent,
-            })
-          ),
+          answers: Array.from(question.getElementsByTagName("answer")).map((answer) => ({
+            value: answer.getAttribute("value"),
+            text: answer.textContent,
+          })),
         }));
-        setQuestions(parsedQuestions);
-      })
-      .catch((error) => console.error("Erro ao carregar o XML:", error));
-  }, []);
 
+        setQuestions(parsedQuestions);
+
+        // Inicializa as respostas do usuário
+        setUserAnswers(
+          parsedQuestions.reduce((acc, question) => {
+            acc[question.id] = null;
+            return acc;
+          }, {})
+        );
+
+        setLoading(false); // Define que o carregamento foi concluído
+      } catch (error) {
+        console.error("Erro ao carregar o XML:", error);
+        setLoading(false); // Finaliza o carregamento mesmo se houver erro
+      }
+    };
+
+    loadQuestions();
+  }, []); // A dependência vazia garante que isso ocorra apenas uma vez ao carregar o componente
+
+  // Manipula a resposta do usuário
   const handleAnswer = (questionId, value) => {
     setUserAnswers({ ...userAnswers, [questionId]: value });
   };
 
+  // Envia o questionário
   const submitQuiz = () => {
     const correctAnswers = questions.reduce((score, question) => {
       const correctAnswer = question.answers.find((answer) => answer.value === "1");
@@ -45,12 +71,36 @@ function App() {
 
     if (attemptsLeft > 1) {
       alert(`Você acertou ${correctAnswers} de ${questions.length} questões.`);
-      setUserAnswers({});
+      setUserAnswers(
+        questions.reduce((acc, question) => {
+          acc[question.id] = null;
+          return acc;
+        }, {})
+      );
     } else {
       alert("Você esgotou todas as suas tentativas.");
+      setQuizFinished(true); // Marca o quiz como finalizado
+    }
+
+    // Desabilita o botão de envio após a primeira tentativa
+    document.getElementById("submit-button").disabled = true;
+  };
+
+  // Função para exibir a próxima questão
+  const nextQuestion = () => {
+    if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
     }
   };
 
+  // Função para exibir a questão anterior
+  const previousQuestion = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(currentQuestionIndex - 1);
+    }
+  };
+
+  // Renderização do questionário
   return (
     <div className="container">
       <header>
@@ -62,6 +112,9 @@ function App() {
           <strong>Maior pontuação:</strong> {highestScore}
         </p>
       </header>
+
+      {attemptsLeft === 0 && <p>Você não pode mais responder o questionário.</p>}
+      {quizFinished && <p>O questionário foi finalizado.</p>}
 
       <div className="question-nav">
         {questions.map((_, index) => (
@@ -79,7 +132,9 @@ function App() {
       </div>
 
       <main>
-        {questions.length > 0 && (
+        {loading ? (
+          <p>Carregando perguntas...</p>
+        ) : questions.length > 0 && attemptsLeft > 0 ? (
           <div className="question">
             <p>
               {currentQuestionIndex + 1}.{" "}
@@ -95,43 +150,40 @@ function App() {
                     handleAnswer(questions[currentQuestionIndex].id, answer.value)
                   }
                   checked={
-                    userAnswers[questions[currentQuestionIndex].id] ===
-                    answer.value
+                    userAnswers[questions[currentQuestionIndex].id] === answer.value
                   }
                 />
                 {answer.text}
               </label>
             ))}
           </div>
+        ) : (
+          <p>Sem perguntas disponíveis.</p>
         )}
       </main>
 
-      <div className="navigation-buttons">
-        <button
-          onClick={() =>
-            setCurrentQuestionIndex((prev) => Math.max(prev - 1, 0))
-          }
-        >
-          ← Anterior
-        </button>
-        <button
-          onClick={() =>
-            setCurrentQuestionIndex((prev) =>
-              Math.min(prev + 1, questions.length - 1)
-            )
-          }
-        >
-          Próxima →
-        </button>
-      </div>
-
-      <button
-        id="submit-button"
-        onClick={submitQuiz}
-        disabled={attemptsLeft === 0}
-      >
-        Enviar
-      </button>
+      {attemptsLeft > 0 && !quizFinished && (
+        <>
+          <div className="navigation-buttons">
+            <button onClick={previousQuestion} disabled={currentQuestionIndex === 0}>
+              ← Anterior
+            </button>
+            <button
+              onClick={nextQuestion}
+              disabled={currentQuestionIndex === questions.length - 1}
+            >
+              Próxima →
+            </button>
+          </div>
+          <button
+            id="submit-button"
+            onClick={submitQuiz}
+            disabled={attemptsLeft === 0}
+          >
+            Enviar
+          </button>
+        </>
+      )}
     </div>
   );
 }
