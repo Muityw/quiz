@@ -1,3 +1,5 @@
+
+
 import React from 'react';
 import ReactDOM from 'react-dom/client'; // Alterado para 'react-dom/client'
 import './styles/estilo.css';
@@ -9,3 +11,4 @@ root.render(
     <App />
   </React.StrictMode>
 );
+

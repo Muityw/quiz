@@ -1,64 +1,30 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import questions from './questions'; // Usando o arquivo JSON de perguntas
+
 
 const Quiz = () => {
-  const [questions, setQuestions] = useState([]);
-  const [userAnswers, setUserAnswers] = useState({});
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const loadQuestions = async () => {
-      try {
-        const response = await fetch("/questions.xml");
-        if (!response.ok) {
-          throw new Error("Falha ao carregar o XML.");
-        }
-
-        const data = await response.text();
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(data, "application/xml");
-
-        const questionNodes = xmlDoc.getElementsByTagName("question");
-        const parsedQuestions = Array.from(questionNodes).map((question) => {
-          const questionText = question.getElementsByTagName("text")[0]?.textContent.trim() || "";
-          const answers = Array.from(question.getElementsByTagName("answer")).map((answer) => ({
-            value: answer.getAttribute("value"),
-            text: answer.textContent.trim(),
-          }));
-          return {
-            id: question.getAttribute("id"),
-            text: questionText,
-            answers,
-          };
-        });
-
-        setQuestions(parsedQuestions);
-        setLoading(false);
-
-        setUserAnswers(
-          parsedQuestions.reduce((acc, question) => {
-            acc[question.id] = null;
-            return acc;
-          }, {})
-        );
-      } catch (error) {
-        console.error("Erro ao carregar o XML:", error);
-        setLoading(false);
-      }
-    };
-
-    loadQuestions();
-  }, []);
+  const [userAnswers, setUserAnswers] = useState(
+    questions.reduce((acc, question) => {
+      acc[question.id] = null; // Inicializa todas as respostas como null
+      return acc;
+    }, {})
+  );
 
   const handleAnswerChange = (questionId, value) => {
     setUserAnswers((prevAnswers) => ({
       ...prevAnswers,
-      [questionId]: value,
+      [questionId]: value, // Atualiza a resposta do usuário para a questão
     }));
   };
 
-  if (loading) {
-    return <div>Carregando perguntas...</div>;
-  }
+  const submitQuiz = () => {
+    const correctAnswers = questions.reduce((score, question) => {
+      const correctAnswer = question.answers.find((answer) => answer.value === "1");
+      return score + (userAnswers[question.id] === correctAnswer?.value ? 1 : 0); // Calcula as respostas corretas
+    }, 0);
+
+    alert(`Você acertou ${correctAnswers} de ${questions.length} questões.`);
+  };
 
   return (
     <div>
@@ -80,8 +46,11 @@ const Quiz = () => {
           ))}
         </div>
       ))}
+      <button onClick={submitQuiz}>Enviar</button>
     </div>
   );
 };
 
 export default Quiz;
+
+

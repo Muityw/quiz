@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import questionsData from "./questions"; // Importando os dados do arquivo
+import questionsData from "./questions"; // serve para imporatr as quetões que estão no question.jssimport './styles/quiz_css_styles.css'; // como o arquivo de scc esta na parta styles tem esta importação 
+
 
 function App() {
   const [questions] = useState(questionsData); // Define as perguntas diretamente
@@ -41,6 +42,19 @@ function App() {
     }
   };
 
+  // As funções a baixos servem para navergar de um pergunta para a outr, lembra de escrever o que cada uma faz depois 
+  const nextQuestion = () => {
+    if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+    }
+  };
+
+  const prevQuestion = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(currentQuestionIndex - 1);
+    }
+  };
+
   return (
     <div className="container">
       <header>
@@ -74,6 +88,16 @@ function App() {
               </label>
             ))}
           </div>
+
+          <div>
+            <button onClick={prevQuestion} disabled={currentQuestionIndex === 0}>
+              Anterior
+            </button>
+            <button onClick={nextQuestion} disabled={currentQuestionIndex === questions.length - 1}>
+              Próximo
+            </button>
+          </div>
+
           <button onClick={submitQuiz}>Enviar</button>
         </>
       )}

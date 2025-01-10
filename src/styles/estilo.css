@@ -16,11 +16,11 @@ body {
 
 .container {
     background-color: #ffffff; /* Branco */
-    padding: 30px;
+    padding: 3%;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     width: 100%;
-    max-width: 900px;
+    max-width: 90%;
     font-size: 1rem;
 }
 
@@ -28,18 +28,18 @@ h1 {
     text-align: center;
     color: #006747; /* Verde IFSP */
     font-size: 2.5rem;
-    margin-bottom: 20px;
+    margin-bottom: 2%;
 }
 
 .question-nav {
-    margin: 20px 0;
+    margin: 2% 0;
     display: flex;
     justify-content: center; /* Centraliza os itens na linha */
     align-items: center; 
 }
 
 .question-nav a {
-    margin: 0 15px; 
+    margin: 0 1.5%; 
     text-decoration: none;
     color: #004c5c; /* Azul IFSP */
     font-weight: bold;
@@ -51,15 +51,25 @@ h1 {
     color: #003c4b; /* Tom mais escuro do Azul IFSP */
 }
 
-
-
 .question {
     display: none;
-    margin-bottom: 20px;
+    margin-bottom: 2%;
+    padding: 2%;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
 }
 
 .question.active {
     display: block;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 2%; /* Espaçamento entre as opções */
+    margin-top: 1%;
 }
 
 button {
@@ -72,11 +82,9 @@ button {
     border-radius: 5px;
     transition: background-color 0.3s ease, transform 0.2s ease;
     width: 100%;
-    max-width: 200px;
-    margin: 15px 0;
+    max-width: 40%;
+    margin: 1.5% auto;
     display: block;
-    margin-left: auto;
-    margin-right: auto;
 }
 
 button:hover {
@@ -89,7 +97,7 @@ button:active {
 }
 
 #feedback {
-    margin-top: 20px;
+    margin-top: 2%;
     font-size: 1.2rem;
     color: #2a3c3f; /* Cinza Escuro */
     text-align: center;
@@ -103,7 +111,7 @@ button:active {
 
 @media (max-width: 768px) {
     .container {
-        padding: 15px;
+        padding: 5%;
     }
 
     h1 {
@@ -112,7 +120,7 @@ button:active {
 
     .question-nav a {
         font-size: 1rem;
-        margin: 0 8px;
+        margin: 0 1%;
     }
 
     button {
@@ -124,10 +132,6 @@ button:active {
     #feedback {
         font-size: 1rem;
     }
-}
-
-.question.active {
-    animation: fadeIn 0.5s ease-out;
 }
 
 @keyframes fadeIn {
