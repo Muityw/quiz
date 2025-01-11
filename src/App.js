@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import questions from "./questions"; // Importa as perguntas do arquivo questions.js
+import questions from "./questions.js"; // Importa as perguntas do arquivo questions.js
 import './styles/estilo.css'; // Importa o arquivo de estilos
 
 function App() {
