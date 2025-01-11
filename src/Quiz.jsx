@@ -1,47 +1,26 @@
-import React, { useState } from 'react';
-import questions from './questions';
+import React from "react";
+import questions from "./questions"; // Importa as perguntas do arquivo questions.js
 
-function Quiz() {
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-
-  const handleNext = () => {
-    if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-    }
-  };
-
-  const handlePrevious = () => {
-    if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(currentQuestionIndex - 1);
-    }
-  };
-
+const Quiz = ({ currentQuestionIndex, handleAnswer, userAnswers }) => {
   return (
-    <div className="container">
-      <h1>Questionário de Desenvolvimento Web</h1>
-      <div className="question-nav">
-        <button onClick={handlePrevious} disabled={currentQuestionIndex === 0}>
-          Anterior
-        </button>
-        <button onClick={handleNext} disabled={currentQuestionIndex === questions.length - 1}>
-          Próximo
-        </button>
+    <div className="quiz">
+      <h2>{questions[currentQuestionIndex].text}</h2>
+      <div className="options">
+        {questions[currentQuestionIndex].answers.map((answer, index) => (
+          <label key={index}>
+            <input
+              type="radio"
+              name={`q${questions[currentQuestionIndex].id}`}
+              value={answer.value}
+              onChange={() => handleAnswer(questions[currentQuestionIndex].id, answer.value)}
+              checked={userAnswers[questions[currentQuestionIndex].id] === answer.value}
+            />
+            {answer.text}
+          </label>
+        ))}
       </div>
-      {questions.map((question, index) => (
-        <div key={question.id} className={`question ${index === currentQuestionIndex ? 'active' : ''}`}>
-          <h2>{question.text}</h2>
-          <div className="quiz-options">
-            {question.answers.map((answer, idx) => (
-              <label key={idx}>
-                <input type="radio" name={`question-${question.id}`} value={answer.value} />
-                {answer.text}
-              </label>
-            ))}
-          </div>
-        </div>
-      ))}
     </div>
   );
-}
+};
 
 export default Quiz;

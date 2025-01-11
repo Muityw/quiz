@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import questions from "./questions"; // Importa as perguntas do arquivo JSON
+import questions from "./questions"; // Importa as perguntas do arquivo questions.js
 import './styles/estilo.css'; // Importa o arquivo de estilos
 
 function App() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [userAnswers, setUser  Answers] = useState(
+  const [userAnswers, setUser Answers] = useState(
     questions.reduce((acc, question) => {
       acc[question.id] = null; // Inicializa todas as respostas como null
       return acc;
@@ -16,7 +16,7 @@ function App() {
 
   // Função para lidar com a seleção de respostas
   const handleAnswer = (questionId, value) => {
-    setUser  Answers({ ...userAnswers, [question Id]: value });
+    setUser Answers({ ...userAnswers, [questionId]: value });
   };
 
   // Função para enviar o quiz e calcular a pontuação
@@ -31,7 +31,7 @@ function App() {
 
     if (attemptsLeft > 1) {
       alert(`Você acertou ${correctAnswers} de ${questions.length} questões.`);
-      setUser  Answers(
+      setUser Answers(
         questions.reduce((acc, question) => {
           acc[question.id] = null;
           return acc;
@@ -85,7 +85,7 @@ function App() {
                     name={`q${questions[currentQuestionIndex].id}`}
                     value={answer.value}
                     onChange={() => handleAnswer(questions[currentQuestionIndex].id, answer.value)}
-                    checked={userAnswers[questions[currentQuestionIndex].id] === answer.value}
+                    checked={userAnswers[questions[currentQuestion Index].id] === answer.value}
                   />
                   {answer.text}
                 </label>
@@ -93,16 +93,17 @@ function App() {
             </div>
           </div>
 
-          <div className="question-nav">
+          <div className="navigation">
             <button onClick={prevQuestion} disabled={currentQuestionIndex === 0}>
-              Anterior
+              Pergunta Anterior
             </button>
             <button onClick={nextQuestion} disabled={currentQuestionIndex === questions.length - 1}>
-              Próximo
+              Próxima Pergunta
+            </button>
+            <button onClick={submitQuiz}>
+              Enviar Respostas
             </button>
           </div>
-
-          <button onClick={submitQuiz}>Enviar</button>
         </>
       )}
     </div>
