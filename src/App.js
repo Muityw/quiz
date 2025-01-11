@@ -70,7 +70,7 @@ function App() {
       </header>
 
       {quizFinished ? (
-        <p>O questionário foi finalizado.</p>
+        <p> O questionário foi finalizado.</p>
       ) : (
         <>
           <div className="question active">
@@ -85,7 +85,7 @@ function App() {
                     name={`q${questions[currentQuestionIndex].id}`}
                     value={answer.value}
                     onChange={() => handleAnswer(questions[currentQuestionIndex].id, answer.value)}
-                    checked={userAnswers[questions[currentQuestion Index].id] === answer.value}
+                    checked={userAnswers[questions[currentQuestionIndex].id] === answer.value}
                   />
                   {answer.text}
                 </label>
