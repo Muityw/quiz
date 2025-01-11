@@ -4,7 +4,7 @@ import './styles/estilo.css'; // Importa o arquivo de estilos
 
 function App() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [userAnswers, setUserAnswers] = useState(
+  const [userAnswers, setUser  Answers] = useState(
     questions.reduce((acc, question) => {
       acc[question.id] = null; // Inicializa todas as respostas como null
       return acc;
@@ -16,7 +16,7 @@ function App() {
 
   // Função para lidar com a seleção de respostas
   const handleAnswer = (questionId, value) => {
-    setUserAnswers({ ...userAnswers, [questionId]: value });
+    setUser  Answers({ ...userAnswers, [question Id]: value });
   };
 
   // Função para enviar o quiz e calcular a pontuação
@@ -31,7 +31,7 @@ function App() {
 
     if (attemptsLeft > 1) {
       alert(`Você acertou ${correctAnswers} de ${questions.length} questões.`);
-      setUserAnswers(
+      setUser  Answers(
         questions.reduce((acc, question) => {
           acc[question.id] = null;
           return acc;
