@@ -1,12 +1,13 @@
 import React, { useState } from "react";
-import questions from "./questions"; // Importa as perguntas do arquivo JSON
-import './styles/estilo.css'; // Importa o arquivo de estilos
+import questionsData from "./questions"; // serve para imporatr as quetões que estão no question.jssimport './styles/quiz_css_styles.css'; // como o arquivo de scc esta na parta styles tem esta importação 
+
 
 function App() {
+  const [questions] = useState(questionsData); // Define as perguntas diretamente
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [userAnswers, setUser  Answers] = useState(
+  const [userAnswers, setUserAnswers] = useState(
     questions.reduce((acc, question) => {
-      acc[question.id] = null; // Inicializa todas as respostas como null
+      acc[question.id] = null;
       return acc;
     }, {})
   );
@@ -14,12 +15,10 @@ function App() {
   const [highestScore, setHighestScore] = useState(0);
   const [quizFinished, setQuizFinished] = useState(false);
 
-  // Função para lidar com a seleção de respostas
   const handleAnswer = (questionId, value) => {
-    setUser  Answers({ ...userAnswers, [question Id]: value });
+    setUserAnswers({ ...userAnswers, [questionId]: value });
   };
 
-  // Função para enviar o quiz e calcular a pontuação
   const submitQuiz = () => {
     const correctAnswers = questions.reduce((score, question) => {
       const correctAnswer = question.answers.find((answer) => answer.value === "1");
@@ -31,7 +30,7 @@ function App() {
 
     if (attemptsLeft > 1) {
       alert(`Você acertou ${correctAnswers} de ${questions.length} questões.`);
-      setUser  Answers(
+      setUserAnswers(
         questions.reduce((acc, question) => {
           acc[question.id] = null;
           return acc;
@@ -43,14 +42,13 @@ function App() {
     }
   };
 
-  // Função para avançar para a próxima pergunta
+  // As funções a baixos servem para navergar de um pergunta para a outr, lembra de escrever o que cada uma faz depois 
   const nextQuestion = () => {
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     }
   };
 
-  // Função para voltar para a pergunta anterior
   const prevQuestion = () => {
     if (currentQuestionIndex > 0) {
       setCurrentQuestionIndex(currentQuestionIndex - 1);
@@ -73,27 +71,25 @@ function App() {
         <p>O questionário foi finalizado.</p>
       ) : (
         <>
-          <div className="question active">
+          <div>
             <p>
               {currentQuestionIndex + 1}. {questions[currentQuestionIndex].text}
             </p>
-            <div className="quiz-options">
-              {questions[currentQuestionIndex].answers.map((answer, index) => (
-                <label key={index}>
-                  <input
-                    type="radio"
-                    name={`q${questions[currentQuestionIndex].id}`}
-                    value={answer.value}
-                    onChange={() => handleAnswer(questions[currentQuestionIndex].id, answer.value)}
-                    checked={userAnswers[questions[currentQuestionIndex].id] === answer.value}
-                  />
-                  {answer.text}
-                </label>
-              ))}
-            </div>
+            {questions[currentQuestionIndex].answers.map((answer, index) => (
+              <label key={index}>
+                <input
+                  type="radio"
+                  name={`q${questions[currentQuestionIndex].id}`}
+                  value={answer.value}
+                  onChange={() => handleAnswer(questions[currentQuestionIndex].id, answer.value)}
+                  checked={userAnswers[questions[currentQuestionIndex].id] === answer.value}
+                />
+                {answer.text}
+              </label>
+            ))}
           </div>
 
-          <div className="question-nav">
+          <div>
             <button onClick={prevQuestion} disabled={currentQuestionIndex === 0}>
               Anterior
             </button>
@@ -110,3 +106,4 @@ function App() {
 }
 
 export default App;
+
