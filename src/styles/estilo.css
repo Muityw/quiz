@@ -1,6 +1,6 @@
 body {
   font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
+  background-color: #1A1A1A; /* Cor de fundo */
   margin: 0;
   padding: 0;
 }
@@ -9,7 +9,7 @@ body {
   max-width: 600px;
   margin: 20px auto;
   padding: 20px;
-  background: white;
+  background-color: #2F4F7F; /* Cor principal */
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
@@ -36,8 +36,8 @@ body {
 }
 
 button {
-  background-color: #4CAF50;
-  color: #fff;
+  background-color: #8B9467; /* Cor secundária */
+  color: #FFFFFF; /* Cor de texto */
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
@@ -45,5 +45,5 @@ button {
 }
 
 button:hover {
-  background-color: #3e8e41;
+  background-color: #FFC080; /* Cor de destaque */
 }
