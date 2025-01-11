@@ -1,6 +1,7 @@
 body {
   font-family: Arial, sans-serif;
-  background-color: #1A1A1A; /* Cor de fundo */
+  background-color: #121212; /* Fundo mais escuro para maior contraste */
+  color: #FFFFFF; /* Cor do texto para contraste com o fundo */
   margin: 0;
   padding: 0;
 }
@@ -8,26 +9,28 @@ body {
 .container {
   max-width: 600px;
   margin: 20px auto;
-  padding: 20px;
-  background-color: #2F4F7F; /* Cor principal */
-  border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 25px;
+  background-color: #2E3B55; /* Cor principal mais suave */
+  border-radius: 8px; /* Bordas mais arredondadas */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Sombra mais visível */
 }
 
 .question {
-  margin-bottom: 20px;
+  margin-bottom: 25px;
+  font-size: 18px; /* Tamanho de fonte maior para melhor leitura */
+  font-weight: bold; /* Destaca a pergunta */
 }
 
 .quiz-options {
-  margin: 10px 0;
+  margin: 15px 0;
 }
 
 .quiz-options div {
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .quiz-options input[type="radio"] {
-  margin-right: 10px;
+  margin-right: 12px;
 }
 
 .navigation {
@@ -36,14 +39,17 @@ body {
 }
 
 button {
-  background-color: #8B9467; /* Cor secundária */
-  color: #FFFFFF; /* Cor de texto */
-  padding: 10px 20px;
+  background-color: #667ACC; /* Cor secundária mais viva */
+  color: #FFFFFF; /* Texto em branco */
+  padding: 12px 25px; /* Botões maiores */
   border: none;
-  border-radius: 5px;
+  border-radius: 8px; /* Bordas arredondadas */
   cursor: pointer;
+  font-size: 16px; /* Tamanho de texto maior */
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Transições suaves */
 }
 
 button:hover {
-  background-color: #FFC080; /* Cor de destaque */
+  background-color: #4055A8; /* Cor de destaque mais evidente */
+  transform: scale(1.05); /* Leve aumento ao passar o mouse */
 }
