@@ -1,85 +1,123 @@
+// Importa o React e o useState para gerenciar o estado do componente
 import React, { useState } from "react";
-import questions from "./questions"; // Importa as perguntas do arquivo questions.js
-import './styles/estilo.css'; // Importa o arquivo de estilos
 
+// Importa as perguntas do arquivo questions.js
+import questions from "./questions";
+
+// Importa o arquivo de estilos para o componente
+import './styles/estilo.css';
+
+// Função que define o componente App
 function App() {
+  // Estado para armazenar o índice da pergunta atual
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [userAnswers, setUser Answers] = useState(
+
+  // Estado para armazenar as respostas do usuário
+  const [userAnswers, setUserAnswers] = useState(
+    // Inicializa as respostas como null para cada pergunta
     questions.reduce((acc, question) => {
-      acc[question.id] = null; // Inicializa todas as respostas como null
+      acc[question.id] = null;
       return acc;
     }, {})
   );
-  const [attemptsLeft, setAttemptsLeft] = useState(3);
-  const [highestScore, setHighestScore] = useState(0);
-  const [quizFinished, setQuizFinished] = useState(false);
+
+  // Estado para armazenar a pontuação do usuário
+  const [score, setScore] = useState(0);
+
+  // Estado para armazenar o número de tentativas do usuário
+  const [attempts, setAttempts] = useState(0);
+
+  // Estado para armazenar a maior pontuação alcançada pelo usuário
+  const [maxScore, setMaxScore] = useState(0);
+
+  // Estado para controlar a exibição dos resultados
+  const [showResults, setShowResults] = useState(false);
 
   // Função para lidar com a seleção de respostas
   const handleAnswer = (questionId, value) => {
-    setUser Answers({ ...userAnswers, [questionId]: value });
-  };
-
-  // Função para enviar o quiz e calcular a pontuação
-  const submitQuiz = () => {
-    const correctAnswers = questions.reduce((score, question) => {
-      const correctAnswer = question.answers.find((answer) => answer.value === "1");
-      return score + (userAnswers[question.id] === correctAnswer?.value ? 1 : 0);
-    }, 0);
-
-    setHighestScore(Math.max(highestScore, correctAnswers));
-    setAttemptsLeft(attemptsLeft - 1);
-
-    if (attemptsLeft > 1) {
-      alert(`Você acertou ${correctAnswers} de ${questions.length} questões.`);
-      setUser Answers(
-        questions.reduce((acc, question) => {
-          acc[question.id] = null;
-          return acc;
-        }, {})
-      );
-    } else {
-      alert("Você esgotou todas as suas tentativas.");
-      setQuizFinished(true);
-    }
+    // Atualiza as respostas do usuário com a nova resposta
+    setUserAnswers({ ...userAnswers, [questionId]: value });
   };
 
   // Função para avançar para a próxima pergunta
   const nextQuestion = () => {
+    // Verifica se a próxima pergunta existe
     if (currentQuestionIndex < questions.length - 1) {
+      // Avança para a próxima pergunta
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     }
   };
 
   // Função para voltar para a pergunta anterior
   const prevQuestion = () => {
+    // Verifica se a pergunta anterior existe
     if (currentQuestionIndex > 0) {
+      // Volta para a pergunta anterior
       setCurrentQuestionIndex(currentQuestionIndex - 1);
     }
   };
 
+  // Função para enviar as respostas e calcular a pontuação
+  const submitAnswers = () => {
+    // Calcula a pontuação do usuário
+    const correctAnswers = questions.reduce((score, question) => {
+      const correctAnswer = question.answers.find((answer) => answer.value === "1");
+      return score + (userAnswers[question.id] === correctAnswer?.value ? 1 : 0);
+    }, 0);
+
+    // Atualiza a pontuação do usuário
+    setScore(correctAnswers);
+
+    // Incrementa o número de tentativas
+    setAttempts(attempts + 1);
+
+    // Verifica se a pontuação atual é maior que a maior pontuação alcançada
+    if (correctAnswers > maxScore) {
+      // Atualiza a maior pontuação alcançada
+      setMaxScore(correctAnswers);
+    }
+
+    // Verifica se o usuário já fez 3 tentativas
+    if (attempts < 2) {
+      // Reinicializa as respostas do usuário
+      setUserAnswers(
+        questions.reduce((acc, question) => {
+          acc[question.id] = null;
+          return acc;
+        }, {})
+      );
+
+      // Volta para a primeira pergunta
+      setCurrentQuestionIndex(0);
+    } else {
+      // Exibe os resultados
+      setShowResults(true);
+    }
+  };
+
+  // Retorna o JSX do componente
   return (
     <div className="container">
       <header>
         <h1>Questionário de Desenvolvimento Web</h1>
-        <p>
-          <strong>Tentativas restantes:</strong> {attemptsLeft}
-        </p>
-        <p>
-          <strong>Maior pontuação:</strong> {highestScore}
-        </p>
       </header>
 
-      {quizFinished ? (
-        <p> O questionário foi finalizado.</p>
+      {showResults ? (
+        // Exibe os resultados
+        <div>
+          <h2>Resultado:</h2>
+          <p>Sua maior pontuação foi {maxScore} de {questions.length} perguntas.</p>
+        </div>
       ) : (
-        <>
-          <div className="question active">
+        // Exibe as perguntas
+        <div>
+          <div className="question">
             <p>
               {currentQuestionIndex + 1}. {questions[currentQuestionIndex].text}
             </p>
             <div className="quiz-options">
               {questions[currentQuestionIndex].answers.map((answer, index) => (
-                <label key={index}>
+                <div key={index}>
                   <input
                     type="radio"
                     name={`q${questions[currentQuestionIndex].id}`}
@@ -87,8 +125,8 @@ function App() {
                     onChange={() => handleAnswer(questions[currentQuestionIndex].id, answer.value)}
                     checked={userAnswers[questions[currentQuestionIndex].id] === answer.value}
                   />
-                  {answer.text}
-                </label>
+                  <label>{answer.text}</label>
+                </div>
               ))}
             </div>
           </div>
@@ -100,14 +138,16 @@ function App() {
             <button onClick={nextQuestion} disabled={currentQuestionIndex === questions.length - 1}>
               Próxima Pergunta
             </button>
-            <button onClick={submitQuiz}>
+            <button onClick={submitAnswers}>
               Enviar Respostas
             </button>
           </div>
-        </>
+          <p>Tentativas restantes: {3 - attempts}</p>
+        </div>
       )}
     </div>
   );
 }
 
+// Exporta o componente App para ser utilizado em outros arquivos
 export default App;
