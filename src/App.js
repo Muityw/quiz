@@ -1,65 +1,68 @@
-// Importa o React e o useState para gerenciar o estado do componente
+// Importa o React e o useState 
 import React, { useState } from "react";
-
-// Importa as perguntas do arquivo questions.js
 import questions from "./questions";
-
-// Importa o arquivo de estilos para o componente
 import './styles/estilo.css';
 
 // Função que define o componente App
+/*esta função serve para o armazemaneto da resposta dada
+ pelo usuario, ela utiliza currentQuestionIndex, 
+ para que seja armazemado a ordem das peguguntas .
+E o userAnswer serve para armazemas as respostas do usuario */
 function App() {
-  // Estado para armazenar o índice da pergunta atual
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-
-  // Estado para armazenar as respostas do usuário
   const [userAnswers, setUserAnswers] = useState(
-    // Inicializa as respostas como null para cada pergunta
+   
     questions.reduce((acc, question) => {
       acc[question.id] = null;
       return acc;
     }, {})
   );
 
-  // Estado para armazenar a pontuação do usuário
+  //  serve para que seja realizado a soma da pontuação 
+  //setScore é usada para atualizar o valor
   const [score, setScore] = useState(0);
 
-  // Estado para armazenar o número de tentativas do usuário
+  // serve para dizer quandas vezes o usuario tentou realizar o quiz 
   const [attempts, setAttempts] = useState(0);
 
-  // Estado para armazenar a maior pontuação alcançada pelo usuário
+  // Vai ser responsavel por dar o feedback da maior pontuação do usuario no quiz
   const [maxScore, setMaxScore] = useState(0);
 
-  // Estado para controlar a exibição dos resultados
+  // Serve para mostrar  os resultados encontrados 
+  // qualdo chegar a true quer dizer que o usuario acabou o quiz 
   const [showResults, setShowResults] = useState(false);
 
-  // Função para lidar com a seleção de respostas
+  // vai ser a função responsavél por atualizar a resposta que o usuario der, usando o 
+  // userAnswer 
   const handleAnswer = (questionId, value) => {
-    // Atualiza as respostas do usuário com a nova resposta
     setUserAnswers({ ...userAnswers, [questionId]: value });
   };
 
+ 
+
   // Função para avançar para a próxima pergunta
+  // o if serve para fazer uma verificação se existe mais oerguntas a frenet.
   const nextQuestion = () => {
-    // Verifica se a próxima pergunta existe
     if (currentQuestionIndex < questions.length - 1) {
-      // Avança para a próxima pergunta
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     }
   };
 
-  // Função para voltar para a pergunta anterior
+  // A mesma coisa da questão anterios porém ela vai servir para
+  //  que seja possivel voltar o questionario
   const prevQuestion = () => {
-    // Verifica se a pergunta anterior existe
+
     if (currentQuestionIndex > 0) {
-      // Volta para a pergunta anterior
       setCurrentQuestionIndex(currentQuestionIndex - 1);
     }
   };
 
-  // Função para enviar as respostas e calcular a pontuação
+  //enviar as respostas e calcular a pontuação
   const submitAnswers = () => {
-    // Calcula a pontuação do usuário
+    /* Esta parte serve para confirmar a questão do usuario
+    reduce  vai soamr a pontuação da questão,começando do zero.
+    dessa forma o score vai procurar o valor 1, q vai ser a resposta correta */
+
     const correctAnswers = questions.reduce((score, question) => {
       const correctAnswer = question.answers.find((answer) => answer.value === "1");
       return score + (userAnswers[question.id] === correctAnswer?.value ? 1 : 0);
@@ -71,15 +74,15 @@ function App() {
     // Incrementa o número de tentativas
     setAttempts(attempts + 1);
 
-    // Verifica se a pontuação atual é maior que a maior pontuação alcançada
+    /* oeste if serve para verificar a pontuação, caso ela seja maior do que estav 
+    armazedo no maxScore vai ser atulizada no setMaxScore  */ 
     if (correctAnswers > maxScore) {
-      // Atualiza a maior pontuação alcançada
       setMaxScore(correctAnswers);
     }
 
-    // Verifica se o usuário já fez 3 tentativas
+    // este if vai verificar se o usuario realizou as 3 tentativas, 
+    // caso isso ocora o jogo não reacilizar 
     if (attempts < 2) {
-      // Reinicializa as respostas do usuário
       setUserAnswers(
         questions.reduce((acc, question) => {
           acc[question.id] = null;
@@ -95,7 +98,7 @@ function App() {
     }
   };
 
-  // Retorna o JSX do componente
+  
   return (
     <div className="container">
       <header>
@@ -103,17 +106,31 @@ function App() {
       </header>
 
       {showResults ? (
-        // Exibe os resultados
+        // showResults fica resposavel por mostrar o resultado da pontuação
         <div>
           <h2>Resultado:</h2>
           <p>Sua maior pontuação foi {maxScore} de {questions.length} perguntas.</p>
         </div>
       ) : (
+
         // Exibe as perguntas
+        // {currentQuestionIndex + 1}. {questions[currentQuestionIndex].text}  
+        // resposavel por extrati o texto de question.js//
+
+        /*{questions[currentQuestionIndex].answers.map((answer, index) => 
+          o map fica resposável por precorrer as questões de acordo com o index */ 
+
+          /**  onChange={() => handleAnswer, é acionada quando o usuario escolhe a opção desejada 
+           * a função handleAnswer foi declarada no inicio do codigo +/- na linha 37*/
+
+          /** checked={userAnswers[questions[currentQuestionIndex].id] === answer.value}
+           * fica responsavel por compara a resposta que foi dada com a correta 
+           */
+
         <div>
           <div className="question">
             <p>
-              {currentQuestionIndex + 1}. {questions[currentQuestionIndex].text}
+              {currentQuestionIndex + 1}. {questions[currentQuestionIndex].text} 
             </p>
             <div className="quiz-options">
               {questions[currentQuestionIndex].answers.map((answer, index) => (
@@ -130,7 +147,6 @@ function App() {
               ))}
             </div>
           </div>
-
           <div className="navigation">
             <button onClick={prevQuestion} disabled={currentQuestionIndex === 0}>
               Pergunta Anterior
