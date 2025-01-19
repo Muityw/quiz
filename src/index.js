@@ -1,10 +1,14 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client'; // Alterado para 'react-dom/client'
-import App from './App'; // Importa o componente App
+import ReactDOM from 'react-dom/client'; // Importar o 'react-dom/client'
+import App from './App';
+import ErrorBoundary from './ErrorBoundary';
+import questions from "./questions";
 
-const root = ReactDOM.createRoot(document.getElementById('root')); // Cria a raiz do React
+// Crie o root com 'createRoot' e renderize o componente
+const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
+  <ErrorBoundary>
     <App />
-  </React.StrictMode>
+  </ErrorBoundary>
 );
+
